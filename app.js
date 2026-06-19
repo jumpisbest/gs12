@@ -275,10 +275,10 @@ function generateCommittee() {
     containerP2.innerHTML += rowHTML_P2;
   }
 
-  // ปรับระยะห่างของข้อความด้านล่างกรรมการให้อยู่ชิดติดกัน (ไม่มีบรรทัดว่าง)
-  // แต่ละแถวสูงประมาณ 36px (เพื่อไม่ให้ซ้อนทับกัน)
-  const baseTop = 500 + (count * 36);
-  const postCommitteeStart = baseTop; // ต่อเลยหลังกรรมการ ไม่เว้นบรรทัด
+  // ปรับระยะห่างของข้อความด้านล่างกรรมการให้อยู่ชิดติดกัน (เว้น 1 บรรทัดไม่ให้ทับเส้นประ)
+  // แต่ละแถวสูง 24px และบวกเพิ่มอีก 24px สำหรับการเว้น 1 บรรทัด
+  const baseTop = 507 + (count * 24) + 24;
+  const postCommitteeStart = baseTop;
 
   document.querySelectorAll('.post-committee').forEach(el => {
       const offset = parseFloat(el.dataset.postOffset || 0);
