@@ -230,10 +230,9 @@ body.exporting #p2_thesis1 { margin-top: -20px !important; }
 body.exporting #p2_thesis2 { margin-top: -20px !important; }
 body.exporting #p2_thesis3 { margin-top: -20px !important; }
 
-/* -------- ช่องกรอก ที่ อว -------- */
-body.exporting #p1_doc_num,
-body.exporting #p2_doc_num { margin-left: 6px !important; }
+/* -------- ช่องกรอก ที่ อว และ วันที่ -------- */
 body.exporting #p2_doc_wrapper { margin-top: -1px !important; }
+body.exporting #p2_date { margin-top: -20.5px !important; }
 
 /* -------- ข้อความระบบ -------- */
 body.exporting #p1_degree       { transform: translateY(-0.75px) !important; }
