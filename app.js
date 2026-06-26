@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => autoResizeInput(input), 100);
   });
 
+
   // 🌟 ระบบกล่องล่องหน: คำนวณพิกัดสัมพัทธ์หลังฟอนต์โหลดเสร็จ
   document.fonts.ready.then(() => {
     setTimeout(initGhostAnchors, 300);
