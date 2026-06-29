@@ -95,7 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   
   document.querySelectorAll('input[name="programType"]').forEach(r => r.addEventListener('change', updateDynamicTexts));
+  document.getElementById('chairCount').addEventListener('change', generateCommittee);
   document.getElementById('committeeCount').addEventListener('change', generateCommittee);
+
 
   document.getElementById('p1_program')?.addEventListener('change', handleProgramInput);
   document.getElementById('p2_program')?.addEventListener('change', handleProgramInput);
@@ -246,39 +248,68 @@ function updateDynamicTexts() {
 }
 
 function generateCommittee() {
-  const count = parseInt(document.getElementById('committeeCount').value);
+  const chairCount = parseInt(document.getElementById('chairCount').value) || 0;
+  const commCount = parseInt(document.getElementById('committeeCount').value) || 0;
+  const totalCount = chairCount + commCount;
+  
   const containerP1 = document.getElementById('committee-area-p1');
   const containerP2 = document.getElementById('committee-area-p2');
   
   containerP1.innerHTML = '';
   containerP2.innerHTML = '';
 
-  if (isNaN(count) || count === 0) return;
+  if (totalCount === 0) {
+      // รีเซ็ตตำแหน่งถ้าไม่มีกรรมการ
+      const baseTop = 507 + 24;
+      document.querySelectorAll('.post-committee').forEach(el => {
+          const offset = parseFloat(el.dataset.postOffset || 0);
+          el.dataset.absTop = baseTop + offset;
+      });
+      initGhostAnchors();
+      return;
+  }
 
-  for (let i = 0; i < count; i++) {
-    const roleText = (i === 0) ? "ประธานกรรมการ" : "กรรมการ";
-    
+  // สร้างประธานกรรมการ
+  for (let i = 0; i < chairCount; i++) {
+    const roleText = "ประธานกรรมการ";
     const rowHTML_P1 = `
       <div class="committee-row">
           <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล" style="padding-top: 1px; transform: translateY(5px);">
           <div class="committee-role" style="transform: translateY(0px);">${roleText}</div>
       </div>
     `;
-    
     const rowHTML_P2 = `
       <div class="committee-row">
           <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล" style="padding-top: 1px; transform: translateY(0px);">
           <div class="committee-role" style="transform: translateY(0px);">${roleText}</div>
       </div>
     `;
-    
+    containerP1.innerHTML += rowHTML_P1;
+    containerP2.innerHTML += rowHTML_P2;
+  }
+
+  // สร้างกรรมการ
+  for (let i = 0; i < commCount; i++) {
+    const roleText = "กรรมการ";
+    const rowHTML_P1 = `
+      <div class="committee-row">
+          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล" style="padding-top: 1px; transform: translateY(5px);">
+          <div class="committee-role" style="transform: translateY(0px);">${roleText}</div>
+      </div>
+    `;
+    const rowHTML_P2 = `
+      <div class="committee-row">
+          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล" style="padding-top: 1px; transform: translateY(0px);">
+          <div class="committee-role" style="transform: translateY(0px);">${roleText}</div>
+      </div>
+    `;
     containerP1.innerHTML += rowHTML_P1;
     containerP2.innerHTML += rowHTML_P2;
   }
 
   // ปรับระยะห่างของข้อความด้านล่างกรรมการให้อยู่ชิดติดกัน (เว้น 1 บรรทัดไม่ให้ทับเส้นประ)
   // แต่ละแถวสูง 24px และบวกเพิ่มอีก 24px สำหรับการเว้น 1 บรรทัด
-  const baseTop = 507 + (count * 24) + 24;
+  const baseTop = 507 + (totalCount * 24) + 24;
   const postCommitteeStart = baseTop;
 
   document.querySelectorAll('.post-committee').forEach(el => {
@@ -458,3 +489,113 @@ function handleProgramInput(event) {
         if(majorDisp) majorDisp.innerText = this.value || '-- เลือก --';
     };
 }
+
+// 🌟 Custom UI for Major Selection (Single Click = Dropdown, Double Click = Edit)
+function setupSmartMajor(id) {
+    const display = document.getElementById(id + '_display');
+    const select = document.getElementById(id);
+    if (!display || !select) return;
+
+    let clickTimeout;
+    
+    display.addEventListener('click', function(e) {
+        if (display.isContentEditable) return; 
+        
+        if (clickTimeout) clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(() => {
+            // Remove any existing dropdowns
+            document.querySelectorAll('.custom-dropdown').forEach(el => el.remove());
+            
+            const rect = display.getBoundingClientRect();
+            const dropdown = document.createElement('div');
+            dropdown.className = 'custom-dropdown';
+            dropdown.style.position = 'absolute';
+            dropdown.style.top = (rect.bottom + window.scrollY - 1) + 'px'; // ขยับขึ้นนิดนึงให้ชิดกรอบ
+            dropdown.style.left = (rect.left + window.scrollX) + 'px';
+            dropdown.style.backgroundColor = '#fff';
+            dropdown.style.border = '1px solid #767676';
+            dropdown.style.boxShadow = '2px 2px 4px rgba(0,0,0,0.1)';
+            dropdown.style.zIndex = '1000';
+            dropdown.style.maxHeight = '250px';
+            dropdown.style.overflowY = 'auto';
+            dropdown.style.minWidth = Math.max(180, rect.width) + 'px';
+            dropdown.style.fontFamily = "'TH SarabunPSK', 'TH Sarabun New', sans-serif";
+            dropdown.style.textAlign = 'left';
+            dropdown.style.padding = '1px 0'; // ขอบบนล่างนิดเดียวแบบ native
+            
+            if (select.options.length <= 1) {
+                const noItem = document.createElement('div');
+                noItem.innerText = '-- กรุณาเลือกหลักสูตรก่อน --';
+                noItem.style.padding = '2px 8px';
+                noItem.style.fontSize = '22px';
+                noItem.style.color = '#999';
+                noItem.style.cursor = 'default';
+                dropdown.appendChild(noItem);
+            } else {
+                Array.from(select.options).forEach(opt => {
+                    const item = document.createElement('div');
+                    item.innerText = opt.text;
+                    item.style.padding = '1px 6px'; // แพดดิ้งแคบๆ แบบ native
+                    item.style.cursor = 'default'; // ใช้ลูกศรปกติ ไม่ใช่รูปมือ
+                    item.style.fontSize = '22px';
+                    item.style.color = '#000';
+                    item.style.lineHeight = '24px';
+                    
+                    item.onmouseenter = () => {
+                        item.style.backgroundColor = '#1a73e8'; // สีน้ำเงินแบบ Chrome Native
+                        item.style.color = '#fff';
+                    };
+                    item.onmouseleave = () => {
+                        item.style.backgroundColor = 'transparent';
+                        item.style.color = '#000';
+                    };
+                    item.onclick = (ev) => {
+                        ev.stopPropagation();
+                        select.value = opt.value;
+                        display.innerText = opt.value ? opt.text : '-- เลือก --';
+                        dropdown.remove();
+                    };
+                    dropdown.appendChild(item);
+                });
+            }
+            
+            document.body.appendChild(dropdown);
+            
+            setTimeout(() => {
+                document.addEventListener('click', function closeDropdown(ev) {
+                    if (!dropdown.contains(ev.target)) {
+                        dropdown.remove();
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            }, 10);
+        }, 200); 
+    });
+
+    display.addEventListener('dblclick', function(e) {
+        if (clickTimeout) clearTimeout(clickTimeout);
+        document.querySelectorAll('.custom-dropdown').forEach(el => el.remove());
+        
+        display.contentEditable = "true";
+        display.focus();
+        
+        // Move cursor to the end
+        if (typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
+            const range = document.createRange();
+            range.selectNodeContents(display);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    });
+    
+    display.addEventListener('blur', function() {
+        display.contentEditable = "false";
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setupSmartMajor('p1_major');
+    setupSmartMajor('p2_major');
+});

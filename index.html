@@ -28,12 +28,23 @@
             <label><input type="radio" name="programType" value="ภาคพิเศษ"> พิเศษ</label>
         </div>
         <div class="control-group">
-            <label><strong>จำนวนกรรมการ:</strong></label>
+            <label><strong>ประธานกรรมการ:</strong></label>
+            <select id="chairCount">
+                <option value="0">-- เลือก --</option>
+                <option value="1">1 ท่าน</option>
+                <option value="2">2 ท่าน</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label><strong>กรรมการ:</strong></label>
             <select id="committeeCount">
                 <option value="0">-- เลือก --</option>
+                <option value="1">1 ท่าน</option>
                 <option value="2">2 ท่าน</option>
                 <option value="3">3 ท่าน</option>
                 <option value="4">4 ท่าน</option>
+                <option value="5">5 ท่าน</option>
+                <option value="6">6 ท่าน</option>
             </select>
         </div>
         <div class="control-group">
@@ -55,42 +66,42 @@
     <div id="page1" class="page-wrapper active">
         <canvas id="pdf-canvas-1" class="pdf-bg"></canvas>
 
-        <div style="position: absolute; top: 134px; left: 102px; display: block; width: 250px; background-color: #ffffff !important; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; white-space: nowrap; padding-right: 5px; z-index: 10;">
+        <div style="position: absolute; top: 175px; left: 102px; display: block; width: 250px; background-color: #ffffff !important; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; white-space: nowrap; padding-right: 5px; z-index: 10;">
             ที่ อว ๘๒๐๕.๐๙/<input class="field" id="p1_doc_num" style="position: relative; width: 140px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="">
         </div>
 
-        <input class="field" id="p1_date" style="top:198px; left:420px; width:200px; text-align: left; transform: translateY(0.2px)" placeholder="วัน เดือน ปี">
+        <input class="field" id="p1_date" style="top:237px; left:385px; width:200px; text-align: left; transform: translateY(0.2px)" placeholder="วัน เดือน ปี">
 
-        <div id="p1_subject_container" style="position: absolute; top: 248px; left: 138px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; white-space: nowrap;">
+        <div id="p1_subject_container" style="position: absolute; top: 289px; left: 138px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; white-space: nowrap;">
             ขอความอนุเคราะห์
         </div>
 
-        <input class="field" id="p1_to" style="top:293px; left:134px; width:550px; transform: translateY(0.2px)" placeholder="ชื่อ/ตำแหน่ง">
+        <input class="field" id="p1_to" style="top:335px; left:134px; width:550px; transform: translateY(0.1px)" placeholder="ชื่อ/ตำแหน่ง">
 
-        <div style="position: absolute; top: 338px; left: 102px; width: 598px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; text-align: justify;">
-            <span style="display:inline-block; width: 66px;"></span>มหาวิทยาลัยทักษิณ <span style="white-space: nowrap;">ขอรับรองว่า</span> <span class="display-name-prefix" id="p1_prefix">นาย</span><input class="field inline-field" id="p1_name" style="position: relative; width: 150px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="ชื่อ-นามสกุล"> รหัสนิสิต<input class="field inline-field" id="p1_student_id" style="position: relative; width: 120px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="กรอกรหัสนิสิต"><span class="display-name-suffix" id="p1_suffix" style="white-space: nowrap;">&nbsp;เป็นนิสิต</span><span style="white-space: nowrap;">ระดับ<span class="display-degree" id="p1_degree">ปริญญาโท</span></span> หลักสูตร <span style="position: relative; display: inline-block; vertical-align: baseline;"><select class="field-select" id="p1_program" style="position: absolute; top: 0; left: 0; width: 100%; height: 24px; opacity: 0; cursor: pointer; z-index: 10;"></select><span id="p1_program_display" class="fake-display" style="pointer-events: none; display: inline-block; min-width: 60px; min-height: 24px; border-bottom: 1.5px dashed #7fb3d3; padding: 0;"></span></span> <span style="white-space: nowrap;">สาขาวิชา</span> <span style="position: relative; display: inline;"><select class="field-select" id="p1_major" style="position: absolute; top: 0; left: 0; width: 230px; height: 24px; opacity: 0; cursor: pointer; z-index: 10;"></select><span id="p1_major_display" class="fake-display" style="pointer-events: none; display: inline; border-bottom: 1.5px dashed #7fb3d3; white-space: normal !important; word-break: break-all !important; overflow-wrap: break-word !important; line-height: 24px;"></span></span> <span style="white-space: nowrap;"><span class="display-program" id="p1_program_text">ภาคปกติ</span>กำลังทำ<span class="thesis-word" id="p1_thesis_word1">วิทยานิพนธ์</span></span> เรื่อง <span class="field fake-input inline-flow-input" id="p1_thesis1" contenteditable="true"></span>
+        <div style="position: absolute; top: 384px; left: 102px; width: 600px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; text-align: justify;">
+            <span style="display:inline-block; width: 95px;"></span>มหาวิทยาลัยทักษิณ <span style="white-space: nowrap;">ขอรับรองว่า</span> <span class="display-name-prefix" id="p1_prefix">นาย</span><input class="field inline-field" id="p1_name" style="position: relative; width: 150px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="ชื่อ-นามสกุล"> รหัสนิสิต<input class="field inline-field" id="p1_student_id" style="position: relative; width: 120px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="กรอกรหัสนิสิต"> <span class="display-name-suffix" id="p1_suffix" style="white-space: nowrap;">เป็นนิสิต</span><span style="white-space: nowrap;">ระดับ<span class="display-degree" id="p1_degree">ปริญญาโท</span></span> หลักสูตร <span style="position: relative; display: inline-block; vertical-align: baseline;"><select class="field-select" id="p1_program" style="position: absolute; top: 0; left: 0; width: 100%; height: 24px; opacity: 0; cursor: pointer; z-index: 10;"></select><span id="p1_program_display" class="fake-display" style="pointer-events: none; display: inline-block; min-width: 60px; min-height: 24px; border-bottom: 1.5px dashed #7fb3d3; padding: 0;"></span></span> <span style="white-space: nowrap;">สาขาวิชา</span> <select class="field-select" id="p1_major" style="display: none;"></select><span id="p1_major_display" class="fake-display" style="cursor: pointer; display: inline; border-bottom: 1.5px dashed #7fb3d3; white-space: normal !important; line-height: 24px; outline: none;" title="คลิก 1 ครั้งเพื่อเลือก / ดับเบิ้ลคลิกเพื่อพิมพ์"></span> <span style="white-space: nowrap;"><span class="display-program" id="p1_program_text">ภาคปกติ</span>กำลังทำ<span class="thesis-word" id="p1_thesis_word1">วิทยานิพนธ์</span></span> เรื่อง <span class="field fake-input inline-flow-input" id="p1_thesis1" contenteditable="true"></span>
             <div id="ghost-anchor-p1" class="ghost-anchor">
-                 <span class="dynamic-text" id="p1_thesis_word2" data-abs-top="483" data-abs-left="168" style="transform: translateY(0.2px)">โดยมีคณะกรรมการที่ปรึกษา<span class="thesis-word">วิทยานิพนธ์</span> ดังนี้</span>
+                 <span class="dynamic-text" id="p1_thesis_word2" data-abs-top="483" data-abs-left="197" style="transform: translateY(0.2px)">โดยมีคณะกรรมการที่ปรึกษา<span class="thesis-word">วิทยานิพนธ์</span> ดังนี้</span>
                 <div class="post-committee" data-post-offset="0" data-abs-top="626" data-abs-left="102" style="position: absolute; width: 598px; line-height: 24px; text-align: justify; transform: translateY(0.9px)">
-                    <span style="display:inline-block; width: 66px;"></span><span class="dynamic-text" style="position: static !important; display: inline;">เพื่อให้การทำ<span class="thesis-word" id="p1_thesis_word3">วิทยานิพนธ์</span> ของนิสิตดำเนินไปด้วยความเรียบร้อย และมีประสิทธิภาพ จึงใคร่ขอความอนุเคราะห์</span> <span class="field fake-input inline-flow-input" id="p1_the" contenteditable="true" style="min-width: 100px; display: inline-block;"></span>
-                    <div class="dynamic-text" style="position: static !important; display: block; text-align: left; margin-left: 0px; margin-top: 0px; width: 100%;"><span style="display:inline-block; width: 66px;"></span>จึงเรียนมาเพื่อโปรดพิจารณาอนุเคราะห์&nbsp;และขอขอบพระคุณเป็นอย่างสูงมา&nbsp;ณ&nbsp;โอกาสนี้</div>
+                    <span style="display:inline-block; width: 95px;"></span><span class="dynamic-text" style="position: static !important; display: inline;">เพื่อให้การทำ<span class="thesis-word" id="p1_thesis_word3">วิทยานิพนธ์</span>ของนิสิตดำเนินไปด้วยความเรียบร้อยและมีประสิทธิภาพ จึงใคร่ขอความอนุเคราะห์</span> <span class="field fake-input inline-flow-input" id="p1_the" contenteditable="true" style="min-width: 100px; display: inline-block;"></span>
+                    <div class="dynamic-text" style="position: static !important; display: block; text-align: left; margin-left: 0px; margin-top: 0px; width: 100%;"><span style="display:inline-block; width: 95px;"></span>จึงเรียนมาเพื่อโปรดพิจารณาอนุเคราะห์ และขอขอบพระคุณเป็นอย่างสูงมา ณ โอกาสนี้</div>
 
                     <!-- ส่วนท้ายหนังสือ: ลงนาม (ไดนามิก) -->
-                    <div style="position: relative; left: 242px; width: 356px; text-align: center; margin-top: 20px; line-height: 24px;">
+                    <div style="position: relative; left: 171px; width: 356px; text-align: center; margin-top: 20px; line-height: 24px;">
                         <div style="font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">ขอแสดงความนับถือ</div>
                         <div style="margin-top: 54px; margin-bottom: 20px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">&lt;&lt;tsuSign01&gt;&gt;</div>
                         <div style="font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">(อาจารย์ ดร. ศุภชัย สัตยานุรักษ์)</div>
                         <div style="font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">คณบดีบัณฑิตวิทยาลัย</div>
                         <div style="font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">ปฏิบัติหน้าที่แทน อธิการบดีมหาวิทยาลัยทักษิณ</div>
                     </div>
-                    <div style="position: relative; left: 0px; width: 100%; text-align: left; margin-top: 20px; line-height: 24px;">
+                    <div style="position: relative; left: -4px; width: 100%; text-align: left; margin-top: 20px; line-height: 24px;">
                         <div style="font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">สำนักงานบัณฑิตวิทยาลัย</div>
                         <div style="font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">โทรศัพท์ ๐-๗๔๓๑-๗๖๕๕</div>
                     </div>
                 </div>
                 <textarea id="p1_thesis_value" style="display:none;"></textarea>
                 <textarea id="p1_the_value" style="display:none;"></textarea>
-                <div id="committee-area-p1" class="committee-container" data-abs-top="507" data-abs-left="164"></div>
+                <div id="committee-area-p1" class="committee-container" data-abs-top="507" data-abs-left="193"></div>
             </div>
         </div>
     </div>
@@ -98,28 +109,28 @@
     <div id="page2" class="page-wrapper">
         <canvas id="pdf-canvas-2" class="pdf-bg"></canvas>
 
-        <div id="p2_doc_wrapper" style="position: absolute; top: 192px; left: 112px; display: block; width: 175px; background-color: #ffffff !important; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; white-space: nowrap; padding-right: 5px; z-index: 10;">
+        <div id="p2_doc_wrapper" style="position: absolute; top: 178px; left: 112px; display: block; width: 175px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; white-space: nowrap; padding-right: 5px; z-index: 10; transform: translateY(-0.4px)">
             อว ๘๒๐๕.๐๙/<input class="field" id="p2_doc_num" style="position: relative; width: 125px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="">
         </div>
 
-        <input class="field" id="p2_date" style="top:192px; left:363px; width:200px; text-align: left; transform: translateY(-0.1px)" placeholder="วัน เดือน ปี">
+        <input class="field" id="p2_date" style="top:178px; left:388px; width:200px; text-align: left; transform: translateY(-0.4px)" placeholder="วัน เดือน ปี">
 
-        <div id="p2_subject_container" style="position: absolute; top: 222px; left: 140px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; white-space: nowrap;">
+        <div id="p2_subject_container" style="position: absolute; top: 208px; left: 138px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; white-space: nowrap; transform: translateY(-0.4px)">
             ขอความอนุเคราะห์
         </div>
 
-        <input class="field" id="p2_to" style="top:264px; left:136px; width:550px; transform: translateY(-0.4px)" placeholder="ชื่อ/ตำแหน่ง">
+        <input class="field" id="p2_to" style="top:234px; left:134px; width:550px; transform: translateY(-0.4px)" placeholder="ชื่อ/ตำแหน่ง">
 
-        <div style="position: absolute; top: 310px; left: 102px; width: 598px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; text-align: justify;">
-            <span style="display:inline-block; width: 66px;"></span>ด้วย <span class="display-name-prefix" id="p2_prefix">นาย</span><input class="field inline-field" id="p2_name" style="position: relative; width: 120px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="ชื่อ-นามสกุล"> รหัสนิสิต<input class="field inline-field" id="p2_student_id" style="position: relative; width: 100px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="กรอกรหัสนิสิต"><span class="display-name-suffix" id="p2_suffix" style="white-space: nowrap;">&nbsp;นิสิตระดับ<span class="display-degree" id="p2_degree">ปริญญาโท</span></span> หลักสูตร <span style="position: relative; display: inline-block; vertical-align: baseline;"><select class="field-select" id="p2_program" style="position: absolute; top: 0; left: 0; width: 100%; height: 24px; opacity: 0; cursor: pointer; z-index: 10;"></select><span id="p2_program_display" class="fake-display" style="pointer-events: none; display: inline-block; min-width: 60px; min-height: 24px; border-bottom: 1.5px dashed #7fb3d3; padding: 0;"></span></span> <span style="white-space: nowrap;">สาขาวิชา</span> <span style="position: relative; display: inline;"><select class="field-select" id="p2_major" style="position: absolute; top: 0; left: 0; width: 230px; height: 24px; opacity: 0; cursor: pointer; z-index: 10;"></select><span id="p2_major_display" class="fake-display" style="pointer-events: none; display: inline; border-bottom: 1.5px dashed #7fb3d3; white-space: normal !important; word-break: break-all !important; overflow-wrap: break-word !important; line-height: 24px;"></span></span> <span style="white-space: nowrap; position: relative; z-index: 20;">ชั้นปีที่ <input class="field inline-field" id="p2_year" style="position: relative; width: 30px; text-align: center; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="1"> <span class="display-program" id="p2_program_text">ภาคปกติ</span>กำลังทำ<span class="thesis-word" id="p2_thesis_word1">วิทยานิพนธ์</span></span> เรื่อง <span class="field fake-input inline-flow-input" id="p2_thesis1" contenteditable="true"></span>
+        <div style="position: absolute; top: 275px; left: 102px; width: 598px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black; line-height: 24px; text-align: justify;">
+            <span style="display:inline-block; width: 103px;"></span>ด้วย <span class="display-name-prefix" id="p2_prefix">นาย</span><input class="field inline-field" id="p2_name" style="position: relative; width: 120px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="ชื่อ-นามสกุล"> รหัสนิสิต<input class="field inline-field" id="p2_student_id" style="position: relative; width: 100px; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="กรอกรหัสนิสิต"> <span class="display-name-suffix" id="p2_suffix" style="white-space: nowrap;">นิสิตระดับ<span class="display-degree" id="p2_degree">ปริญญาโท</span></span> หลักสูตร <span style="position: relative; display: inline-block; vertical-align: baseline;"><select class="field-select" id="p2_program" style="position: absolute; top: 0; left: 0; width: 100%; height: 24px; opacity: 0; cursor: pointer; z-index: 10;"></select><span id="p2_program_display" class="fake-display" style="pointer-events: none; display: inline-block; min-width: 60px; min-height: 24px; border-bottom: 1.5px dashed #7fb3d3; padding: 0;"></span></span> สาขาวิชา <select class="field-select" id="p2_major" style="display: none;"></select><span id="p2_major_display" class="fake-display" style="cursor: pointer; display: inline; border-bottom: 1.5px dashed #7fb3d3; white-space: normal !important; line-height: 24px; outline: none;" title="คลิก 1 ครั้งเพื่อเลือก / ดับเบิ้ลคลิกเพื่อพิมพ์"></span> <span style="white-space: nowrap; position: relative; z-index: 20;">ชั้นปีที่ <input class="field inline-field" id="p2_year" style="position: relative; width: 30px; text-align: center; background: transparent; border: none; border-bottom: 1.5px dashed #7fb3d3; font-family: inherit; font-size: inherit; outline: none; padding: 0; color: black;" placeholder="กรอกชั้นปี"> <span class="display-program" id="p2_program_text">ภาคปกติ</span>กำลังทำ<span class="thesis-word" id="p2_thesis_word1">วิทยานิพนธ์</span></span> เรื่อง <span class="field fake-input inline-flow-input" id="p2_thesis1" contenteditable="true"></span>
             <div id="ghost-anchor-p2" class="ghost-anchor">
-                 <span class="dynamic-text" id="p2_thesis_word2" data-abs-top="483" data-abs-left="168" style="transform: translateY(0.2px)">โดยมีคณะกรรมการที่ปรึกษา<span class="thesis-word">วิทยานิพนธ์</span> ดังนี้</span>
+                 <span class="dynamic-text" id="p2_thesis_word2" data-abs-top="483" data-abs-left="205" style="transform: translateY(0.2px)">โดยมีคณะกรรมการที่ปรึกษา<span class="thesis-word">วิทยานิพนธ์</span> ดังนี้</span>
                 <div class="post-committee" data-post-offset="0" data-abs-top="626" data-abs-left="102" style="position: absolute; width: 598px; line-height: 24px; text-align: justify; transform: translateY(0.9px)">
-                    <span style="display:inline-block; width: 66px;"></span><span class="dynamic-text" style="position: static !important; display: inline;">เพื่อให้การทำ<span class="thesis-word" id="p2_thesis_word3">วิทยานิพนธ์</span> ของนิสิตดำเนินไปด้วยความเรียบร้อย และมีประสิทธิภาพ จึงใคร่ขอความอนุเคราะห์</span> <span class="field fake-input inline-flow-input" id="p2_the" contenteditable="true" style="min-width: 100px; display: inline-block;"></span>
-                    <div class="dynamic-text" style="position: static !important; display: block; text-align: left; margin-left: 0px; margin-top: 0px; width: 100%;"><span style="display:inline-block; width: 66px;"></span>จึงเรียนมาเพื่อโปรดพิจารณาอนุเคราะห์&nbsp;และขอขอบพระคุณเป็นอย่างสูงมา&nbsp;ณ&nbsp;โอกาสนี้</div>
+                    <span style="display:inline-block; width: 103px;"></span><span class="dynamic-text" style="position: static !important; display: inline;">เพื่อให้การทำ<span class="thesis-word" id="p2_thesis_word3">วิทยานิพนธ์</span>ของนิสิตดำเนินไปด้วยความเรียบร้อยและมีประสิทธิภาพ จึงใคร่ขอความอนุเคราะห์</span> <span class="field fake-input inline-flow-input" id="p2_the" contenteditable="true" style="min-width: 100px; display: inline-block;"></span>
+                    <div class="dynamic-text" style="position: static !important; display: block; text-align: left; margin-left: 0px; margin-top: 0px; width: 100%;"><span style="display:inline-block; width: 103px;"></span>จึงเรียนมาเพื่อโปรดพิจารณาอนุเคราะห์ และขอขอบพระคุณเป็นอย่างสูงมา ณ โอกาสนี้</div>
 
                     <!-- ส่วนท้ายหนังสือ: ลงนาม (ไดนามิก) -->
-                    <div style="position: relative; left: 242px; width: 356px; text-align: center; margin-top: 20px; line-height: 24px;">
+                    <div style="position: relative; left: 167px; width: 356px; text-align: center; margin-top: 20px; line-height: 24px;">
                         <div style="margin-top: 54px; margin-bottom: 20px; font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">&lt;&lt;tsuSign01&gt;&gt;</div>
                         <div style="font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">(อาจารย์ ดร. ศุภชัย สัตยานุรักษ์)</div>
                         <div style="font-family: 'TH SarabunPSK', 'TH Sarabun New'; font-size: 22px; color: black;">คณบดีบัณฑิตวิทยาลัย</div>
@@ -127,7 +138,7 @@
                 </div>
                 <textarea id="p2_thesis_value" style="display:none;"></textarea>
                 <textarea id="p2_the_value" style="display:none;"></textarea>
-                <div id="committee-area-p2" class="committee-container" data-abs-top="507" data-abs-left="164"></div>
+                <div id="committee-area-p2" class="committee-container" data-abs-top="507" data-abs-left="200"></div>
             </div>
         </div>
     </div>
@@ -142,7 +153,7 @@
                     
                     if (majorDisplay && smartBr) {
                         if (majorDisplay.getClientRects().length > 1) {
-                            smartBr.innerHTML = '&nbsp;&nbsp;'; 
+                            smartBr.innerHTML = '  '; 
                         } else {
                             smartBr.innerHTML = '<br>'; 
                         }

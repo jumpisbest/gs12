@@ -20,9 +20,14 @@ body {
   font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 20px;
   gap: 24px;
+}
+
+/* ทำให้ส่วนประกอบทั้งหมดอยู่กึ่งกลาง แต่ถ้าจอเล็กจะชิดซ้ายให้ ไม่โดนตัดขอบซ้าย */
+.control-panel, .tabs, .page-wrapper {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ====== Control Panel ====== */
@@ -35,7 +40,11 @@ body {
   flex-wrap: wrap;
   gap: 20px;
   align-items: center;
+  /* ล็อกความกว้าง control-panel ให้เท่ากระดาษ */
   width: 794px;
+  min-width: 794px;
+  max-width: 794px;
+  flex-shrink: 0;
   z-index: 100;
 }
 .control-group {
@@ -78,11 +87,18 @@ body {
 /* ====== Page Wrapper ====== */
 .page-wrapper {
   position: relative;
+  /* ล็อกขนาดเป็น A4 แบบตายตัว (ที่ 96 DPI A4 จะเท่ากับ 794x1123 px พอดี) */
   width: 794px;
+  height: 1123px;
+  min-width: 794px;
   min-height: 1123px;
+  max-width: 794px;
+  max-height: 1123px;
   background: #fff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   display: none;
+  overflow: hidden; /* ป้องกันเนื้อหาทะลัก */
+  flex-shrink: 0; /* ป้องกันเบราว์เซอร์บีบขนาด */
 }
 .page-wrapper.active { display: block; }
 .page-wrapper canvas.pdf-bg { display: block; }
@@ -98,7 +114,8 @@ body {
   color: #000;
   outline: none;
   padding: 0 4px;
-  line-height: 1.15; 
+  line-height: 24px !important; 
+  box-sizing: border-box;
 }
 .field:focus {
   border-bottom: 1.5px solid #1a5276;
@@ -168,7 +185,7 @@ body {
     color: #000;
     white-space: normal;
     word-break: break-word;
-    line-height: 1.1;
+    line-height: 24px !important;
     border-bottom: 1.5px dashed #7fb3d3;
     background: transparent;
     padding: 0;
@@ -271,10 +288,11 @@ body.exporting #p2_major_text {
     cursor: text;
     padding: 0 !important;
     border-bottom: 1.5px dashed #7fb3d3;
-    line-height: 24px;
+    line-height: 24px !important;
     white-space: pre-wrap !important; /* เปิดระบบคำนวณช่องว่างแบบไหลอิสระ */
     word-break: break-all !important; /* บังคับตัดคำเด็ดขาด */
     line-break: anywhere !important; /* ตัดคำได้ทุกจุดแม้มีช่องว่างติดกัน */
+    box-sizing: border-box;
 }
 
 /* 🚫 ดักทางทุกเบราว์เซอร์: ห้ามแอบสร้างกล่อง <div> หรือ <p> ซ้อนด้านในเวลาผู้ใช้กด Enter ให้ใช้ระบบไหลต่อเนื่อง */
@@ -286,6 +304,8 @@ body.exporting #p2_major_text {
 .inline-flow-input:empty {
     display: inline-block !important;
     min-width: 200px;
+    height: 24px;
+    vertical-align: bottom;
 }
 
 /* =======================================================
