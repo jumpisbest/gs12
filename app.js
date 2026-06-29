@@ -65,8 +65,21 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   document.querySelectorAll('.inline-field').forEach(input => {
-    input.addEventListener('input', () => autoResizeInput(input));
-    setTimeout(() => autoResizeInput(input), 100);
+    input.addEventListener('input', () => {
+        autoResizeInput(input);
+        if (typeof applyCustomJustify === 'function') applyCustomJustify();
+    });
+    setTimeout(() => {
+        autoResizeInput(input);
+        if (typeof applyCustomJustify === 'function') applyCustomJustify();
+    }, 100);
+  });
+  
+  // Update justify when contenteditable elements change
+  document.querySelectorAll('.inline-flow-input').forEach(input => {
+      input.addEventListener('input', () => {
+          if (typeof applyCustomJustify === 'function') applyCustomJustify();
+      });
   });
 
 
@@ -245,6 +258,11 @@ function updateDynamicTexts() {
   document.querySelectorAll('.display-program').forEach(el => el.innerText = program);
   document.querySelectorAll('.display-degree').forEach(el => el.innerText = degree);
   document.querySelectorAll('.thesis-word').forEach(el => el.innerText = thesis);
+  
+  // Re-apply custom justify after dynamic text change
+  if (typeof applyCustomJustify === 'function') {
+      setTimeout(applyCustomJustify, 10);
+  }
 }
 
 function generateCommittee() {
@@ -598,4 +616,157 @@ function setupSmartMajor(id) {
 document.addEventListener('DOMContentLoaded', () => {
     setupSmartMajor('p1_major');
     setupSmartMajor('p2_major');
+    initCustomJustify();
+    applyCustomJustify();
 });
+
+// ===== Custom Justify Algorithm (Word-like) =====
+function segmentThai(text) {
+    if (window.Intl && Intl.Segmenter) {
+        const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+        return Array.from(segmenter.segment(text)).map(s => s.segment);
+    }
+    const words = [];
+    text.split(/(\s+)/).forEach(part => {
+        if (!part) return;
+        if (part.trim().length === 0) {
+            words.push(part);
+        } else {
+            let currentWord = "";
+            for (let i = 0; i < part.length; i++) {
+                currentWord += part[i];
+                if (currentWord.length >= 4 && !part[i].match(/[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]/)) {
+                    words.push(currentWord);
+                    currentWord = "";
+                }
+            }
+            if (currentWord.length > 0) words.push(currentWord);
+        }
+    });
+    return words;
+}
+
+function initCustomJustify() {
+    const containers = [
+        document.getElementById('p1_main_para'),
+        document.getElementById('p1_post_para'),
+        document.getElementById('p2_main_para'),
+        document.getElementById('p2_post_para')
+    ];
+
+    containers.forEach(container => {
+        if (!container) return;
+        
+        // Remove old chunks if any (for re-init)
+        const chunks = container.querySelectorAll('.thai-chunk');
+        chunks.forEach(c => {
+            const txt = document.createTextNode(c.textContent);
+            container.replaceChild(txt, c);
+        });
+        
+        const nodes = Array.from(container.childNodes);
+        nodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.textContent;
+                if (text.length > 0) {
+                    const words = segmentThai(text);
+                    const fragment = document.createDocumentFragment();
+                    words.forEach(word => {
+                        const span = document.createElement('span');
+                        span.className = 'thai-word';
+                        span.textContent = word;
+                        fragment.appendChild(span);
+                    });
+                    container.replaceChild(fragment, node);
+                }
+            }
+        });
+    });
+}
+
+function applyCustomJustify() {
+    const containers = [
+        document.getElementById('p1_main_para'),
+        document.getElementById('p1_post_para'),
+        document.getElementById('p2_main_para'),
+        document.getElementById('p2_post_para')
+    ];
+
+    containers.forEach(container => {
+        if (!container) return;
+        
+        // 1. Reset styles
+        container.style.textAlign = 'left';
+        
+        // reset margins on ALL children
+        Array.from(container.children).forEach(el => {
+            if (el.style) el.style.marginRight = '0px';
+        });
+
+        // Force reflow
+        void container.offsetHeight;
+
+        // 2. Group elements by line
+        const lines = [];
+        let currentLine = [];
+        let currentTop = null;
+        const containerRect = container.getBoundingClientRect();
+
+        Array.from(container.children).forEach(el => {
+            if (el.style.display === 'none' || el.classList.contains('ghost-anchor') || el.style.opacity === '0') return;
+            
+            const rect = el.getBoundingClientRect();
+            if (rect.width === 0 && rect.height === 0) return;
+
+            const midY = rect.top + rect.height / 2;
+
+            if (currentTop === null) {
+                currentTop = midY;
+                currentLine.push({ el, rect });
+            } else {
+                if (Math.abs(midY - currentTop) < 15) {
+                    currentLine.push({ el, rect });
+                } else {
+                    lines.push(currentLine);
+                    currentLine = [{ el, rect }];
+                    currentTop = midY;
+                }
+            }
+        });
+        if (currentLine.length > 0) {
+            lines.push(currentLine);
+        }
+
+        // 3. Distribute remaining space per line (except last line)
+        for (let i = 0; i < lines.length - 1; i++) {
+            const line = lines[i];
+            if (line.length === 0) continue;
+
+            const firstEl = line[0].el.getBoundingClientRect();
+            const lastEl = line[line.length - 1].el.getBoundingClientRect();
+            const lineWidth = lastEl.right - firstEl.left;
+            
+            const gap = containerRect.width - lineWidth - 1.5; // safety margin
+
+            if (gap > 0 && gap < containerRect.width * 0.4) {
+                // filter out indent spans (typically the very first element if it has inline width and no class)
+                let stretchable = line.filter((item, index) => {
+                    if (index === 0 && item.el.tagName === 'SPAN' && item.el.style.width && !item.el.className) {
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (stretchable.length > 1) {
+                    // Do not apply margin to the last element of the line
+                    const applyTo = stretchable.slice(0, stretchable.length - 1);
+                    const spacePerItem = gap / applyTo.length;
+                    
+                    applyTo.forEach(item => {
+                        item.el.style.marginRight = spacePerItem + 'px';
+                    });
+                }
+            }
+        }
+    });
+}
