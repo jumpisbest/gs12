@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('p2_program')?.addEventListener('change', handleProgramInput);
 
   updateProgramList();
+  generateCommittee();
 
   setupReqFlow('p1_thesis_value', ['p1_thesis1', 'p1_thesis2', 'p1_thesis3']);
   setupReqFlow('p2_thesis_value', ['p2_thesis1', 'p2_thesis2', 'p2_thesis3']);
@@ -278,7 +279,7 @@ function generateCommittee() {
 
   if (totalCount === 0) {
       // รีเซ็ตตำแหน่งถ้าไม่มีกรรมการ
-      const baseTop = 507 + 24;
+      const baseTop = 507;
       document.querySelectorAll('.post-committee').forEach(el => {
           const offset = parseFloat(el.dataset.postOffset || 0);
           el.dataset.absTop = baseTop + offset;
@@ -292,14 +293,14 @@ function generateCommittee() {
     const roleText = "ประธานกรรมการ";
     const rowHTML_P1 = `
       <div class="committee-row">
-          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล" style="padding-top: 1px; transform: translateY(5px);">
-          <div class="committee-role" style="transform: translateY(0px);">${roleText}</div>
+          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล">
+          <div class="committee-role">${roleText}</div>
       </div>
     `;
     const rowHTML_P2 = `
       <div class="committee-row">
-          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล" style="padding-top: 1px; transform: translateY(0px);">
-          <div class="committee-role" style="transform: translateY(0px);">${roleText}</div>
+          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล">
+          <div class="committee-role">${roleText}</div>
       </div>
     `;
     containerP1.innerHTML += rowHTML_P1;
@@ -311,23 +312,23 @@ function generateCommittee() {
     const roleText = "กรรมการ";
     const rowHTML_P1 = `
       <div class="committee-row">
-          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล" style="padding-top: 1px; transform: translateY(5px);">
-          <div class="committee-role" style="transform: translateY(0px);">${roleText}</div>
+          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล">
+          <div class="committee-role">${roleText}</div>
       </div>
     `;
     const rowHTML_P2 = `
       <div class="committee-row">
-          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล" style="padding-top: 1px; transform: translateY(0px);">
-          <div class="committee-role" style="transform: translateY(0px);">${roleText}</div>
+          <input type="text" class="committee-input" placeholder="ชื่อ-นามสกุล">
+          <div class="committee-role">${roleText}</div>
       </div>
     `;
     containerP1.innerHTML += rowHTML_P1;
     containerP2.innerHTML += rowHTML_P2;
   }
 
-  // ปรับระยะห่างของข้อความด้านล่างกรรมการให้อยู่ชิดติดกัน (เว้น 1 บรรทัดไม่ให้ทับเส้นประ)
-  // แต่ละแถวสูง 24px และบวกเพิ่มอีก 24px สำหรับการเว้น 1 บรรทัด
-  const baseTop = 507 + (totalCount * 24) + 24;
+  // ปรับระยะห่างของข้อความด้านล่างกรรมการ
+  // แต่ละแถวสูง 24px ต่อกันไปเลยโดยไม่ต้องบวกเว้นบรรทัดเพิ่ม
+  const baseTop = 507 + (totalCount * 24);
   const postCommitteeStart = baseTop;
 
   document.querySelectorAll('.post-committee').forEach(el => {
@@ -616,157 +617,65 @@ function setupSmartMajor(id) {
 document.addEventListener('DOMContentLoaded', () => {
     setupSmartMajor('p1_major');
     setupSmartMajor('p2_major');
-    initCustomJustify();
-    applyCustomJustify();
+    initThaiJustify();
 });
 
-// ===== Custom Justify Algorithm (Word-like) =====
-function segmentThai(text) {
-    if (window.Intl && Intl.Segmenter) {
-        const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
-        return Array.from(segmenter.segment(text)).map(s => s.segment);
-    }
-    const words = [];
-    text.split(/(\s+)/).forEach(part => {
-        if (!part) return;
-        if (part.trim().length === 0) {
-            words.push(part);
-        } else {
-            let currentWord = "";
-            for (let i = 0; i < part.length; i++) {
-                currentWord += part[i];
-                if (currentWord.length >= 4 && !part[i].match(/[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]/)) {
-                    words.push(currentWord);
-                    currentWord = "";
-                }
-            }
-            if (currentWord.length > 0) words.push(currentWord);
-        }
+// 🌟 3. อัลกอริทึมจัดช่องว่างชิดขอบ (Word-like Justification)
+function initThaiJustify() {
+    document.querySelectorAll('.thai-justify-container').forEach(container => {
+        container.style.textAlign = 'justify';
+        container.style.textJustify = 'inter-character'; // กระจายช่องว่างระดับตัวอักษรแบบ MS Word
     });
-    return words;
+    document.fonts.ready.then(() => {
+        setTimeout(applyCustomJustify, 500);
+    });
 }
 
-function initCustomJustify() {
-    const containers = [
-        document.getElementById('p1_main_para'),
-        document.getElementById('p1_post_para'),
-        document.getElementById('p2_main_para'),
-        document.getElementById('p2_post_para')
-    ];
-
-    containers.forEach(container => {
-        if (!container) return;
+function wrapThaiWords(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.nodeValue;
+        if (!text.trim()) return;
         
-        // Remove old chunks if any (for re-init)
-        const chunks = container.querySelectorAll('.thai-chunk');
-        chunks.forEach(c => {
-            const txt = document.createTextNode(c.textContent);
-            container.replaceChild(txt, c);
-        });
+        const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+        const segments = segmenter.segment(text);
+        const fragment = document.createDocumentFragment();
         
-        const nodes = Array.from(container.childNodes);
-        nodes.forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE) {
-                const text = node.textContent;
-                if (text.length > 0) {
-                    const words = segmentThai(text);
-                    const fragment = document.createDocumentFragment();
-                    words.forEach(word => {
-                        const span = document.createElement('span');
-                        span.className = 'thai-word';
-                        span.textContent = word;
-                        fragment.appendChild(span);
-                    });
-                    container.replaceChild(fragment, node);
-                }
+        let hasChanges = false;
+        for (const { segment } of segments) {
+            if (segment.trim().length > 0) {
+                const span = document.createElement('span');
+                span.className = 'thai-word';
+                span.textContent = segment;
+                fragment.appendChild(span);
+                hasChanges = true;
+            } else {
+                fragment.appendChild(document.createTextNode(segment));
             }
-        });
-    });
+        }
+        if (hasChanges) {
+            node.parentNode.replaceChild(fragment, node);
+        }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (['INPUT', 'SELECT', 'TEXTAREA', 'STYLE', 'SCRIPT', 'CANVAS'].includes(node.tagName)) return;
+        if (node.classList.contains('thai-word')) return;
+        if (node.classList.contains('fake-input') || node.classList.contains('inline-flow-input')) return;
+        if (node.id && node.id.includes('ghost-anchor')) return;
+        
+        Array.from(node.childNodes).forEach(wrapThaiWords);
+    }
 }
 
 function applyCustomJustify() {
-    const containers = [
-        document.getElementById('p1_main_para'),
-        document.getElementById('p1_post_para'),
-        document.getElementById('p2_main_para'),
-        document.getElementById('p2_post_para')
-    ];
-
-    containers.forEach(container => {
-        if (!container) return;
-        
-        // 1. Reset styles
-        container.style.textAlign = 'left';
-        
-        // reset margins on ALL children
-        Array.from(container.children).forEach(el => {
-            if (el.style) el.style.marginRight = '0px';
-        });
-
-        // Force reflow
-        void container.offsetHeight;
-
-        // 2. Group elements by line
-        const lines = [];
-        let currentLine = [];
-        let currentTop = null;
-        const containerRect = container.getBoundingClientRect();
-
-        Array.from(container.children).forEach(el => {
-            if (el.style.display === 'none' || el.classList.contains('ghost-anchor') || el.style.opacity === '0') return;
-            
-            const rect = el.getBoundingClientRect();
-            if (rect.width === 0 && rect.height === 0) return;
-
-            const midY = rect.top + rect.height / 2;
-
-            if (currentTop === null) {
-                currentTop = midY;
-                currentLine.push({ el, rect });
-            } else {
-                if (Math.abs(midY - currentTop) < 15) {
-                    currentLine.push({ el, rect });
-                } else {
-                    lines.push(currentLine);
-                    currentLine = [{ el, rect }];
-                    currentTop = midY;
-                }
-            }
-        });
-        if (currentLine.length > 0) {
-            lines.push(currentLine);
-        }
-
-        // 3. Distribute remaining space per line (except last line)
-        for (let i = 0; i < lines.length - 1; i++) {
-            const line = lines[i];
-            if (line.length === 0) continue;
-
-            const firstEl = line[0].el.getBoundingClientRect();
-            const lastEl = line[line.length - 1].el.getBoundingClientRect();
-            const lineWidth = lastEl.right - firstEl.left;
-            
-            const gap = containerRect.width - lineWidth - 1.5; // safety margin
-
-            if (gap > 0 && gap < containerRect.width * 0.4) {
-                // filter out indent spans (typically the very first element if it has inline width and no class)
-                let stretchable = line.filter((item, index) => {
-                    if (index === 0 && item.el.tagName === 'SPAN' && item.el.style.width && !item.el.className) {
-                        return false;
-                    }
-                    return true;
-                });
-
-                if (stretchable.length > 1) {
-                    // Do not apply margin to the last element of the line
-                    const applyTo = stretchable.slice(0, stretchable.length - 1);
-                    const spacePerItem = gap / applyTo.length;
-                    
-                    applyTo.forEach(item => {
-                        item.el.style.marginRight = spacePerItem + 'px';
-                    });
-                }
-            }
-        }
+    // ซ่อน native justify
+    document.querySelectorAll('.thai-justify-container').forEach(c => {
+        c.style.textAlign = 'left';
     });
+
+    // ให้บราวเซอร์จัดการ Justify แบบ Native
+    document.querySelectorAll('.thai-justify-container').forEach(c => {
+        c.style.textAlign = 'justify';
+    });
+    
+    // อัปเดต ghost anchor ใหม่
+    initGhostAnchors();
 }
